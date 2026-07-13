@@ -1,4 +1,9 @@
+import anthropic
+import json
 
+
+
+client = anthropic.Anthropic()
 
 
 def get_context():
@@ -30,3 +35,31 @@ def get_context():
     for i in range(len(questions)):
         context[keys[i]] = input(questions[i])
     return context
+
+def get_keywords(context):
+    text = str(context)
+    response = client.messages.create(
+        model="claude-opus-4-8",
+        max_tokens=500,
+        tools=[
+            {
+                "name": "return_keywords",
+                "description": "Return a deduplicated list of competitor search keywords extracted from business context.",
+                "input_schema": {
+                    "type": "object",
+                    "properties": {
+                        "keywords": {
+                            "type": "array",
+                            "items": {"type": "string"}
+                        }
+                    },
+                    "required": ["keywords"]
+                }
+            }
+        ],
+        tool_choice={"type": "tool", "name": "return_keywords"},
+        messages=[
+            {"role": "user", "content": f"Extract search keywords (competitor names, product terms, industry terms) from this business context:\n\n{text}"}
+        ]
+    )
+    return response.content[0].input["keywords"]
