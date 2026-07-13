@@ -4,16 +4,16 @@
 def get_context():
     context = dict()
     questions = [
-    "Can you provide a brief overview of your business and its core offerings?", 
-    "What sets your business apart from competitors (USP)?", 
-    "Who are your primary competitors?", 
-    "What are the primary objectives of your Meta Ads campaign?",
-    "Who is your target audience? (demographics, geographics, psychographics)", 
-    "What problems does your target audience face that your product/service solves?", 
-    "What products or services will be promoted?", 
-    "Are there specific offers, discounts, or promotions you'd like to highlight?", 
-    "Are there competitors whose ads you admire?", 
-    "What is your monthly budget for Meta Ads?" 
+    "Can you provide a brief overview of your business and its core offerings?\n", 
+    "What sets your business apart from competitors (USP)?\n", 
+    "Who are your primary competitors?\n", 
+    "What are the primary objectives of your Meta Ads campaign?\n",
+    "Who is your target audience? (demographics, geographics, psychographics)\n", 
+    "What problems does your target audience face that your product/service solves?\n", 
+    "What products or services will be promoted?\n", 
+    "Are there specific offers, discounts, or promotions you'd like to highlight?\n", 
+    "Are there competitors whose ads you admire?\n", 
+    "What is your monthly budget for Meta Ads?\n" 
     ]
     keys = [
     "business_overview",
