@@ -1,12 +1,18 @@
 import anthropic
 import json
+from urllib.parse import quote
+from apify_client import ApifyClient
+import os
+from dotenv import load_dotenv
 
 
 
+load_dotenv()
 client = anthropic.Anthropic()
+the_apify_client = apify_client = ApifyClient(os.environ["APIFY_TOKEN"])
 
 
-def get_context():
+def get_context() -> dict[str, str]:
     context = dict()
     questions = [
     "Can you provide a brief overview of your business and its core offerings?\n", 
@@ -36,7 +42,7 @@ def get_context():
         context[keys[i]] = input(questions[i])
     return context
 
-def get_keywords(context):
+def get_keywords(context: dict) -> list[str]:
     text = str(context)
     response = client.messages.create(
         model="claude-opus-4-8",
@@ -63,3 +69,34 @@ def get_keywords(context):
         ]
     )
     return response.content[0].input["keywords"]
+
+#claude script to get ad formatted
+def slim_ad(ad):
+    snap = ad.get("snapshot", {})
+    body = snap.get("body") or {}
+    copy = body.get("text")
+    if not copy and snap.get("cards"):
+        copy = snap["cards"][0].get("body")
+    return {
+        "advertiser": snap.get("pageName"),
+        "title": snap.get("title"),
+        "copy": copy,
+        "cta": snap.get("ctaText"),
+        "format": snap.get("displayFormat"),
+        "link": snap.get("linkUrl"),
+        "running_since": ad.get("startDateFormatted"),
+    }
+
+def get_competitor_data(keyword, country="US", limit=5) -> dict[str, str]:
+    url = (
+        "https://www.facebook.com/ads/library/"
+        f"?active_status=active&ad_type=all&country={country}"
+        f"&q={quote(keyword)}&search_type=keyword_unordered"
+    )
+    run = the_apify_client.actor("apify/facebook-ads-scraper").call(
+        run_input={"startUrls": [{"url": url}]},
+        max_items=limit,
+        max_total_charge_usd=0.10,
+    )
+    ads = the_apify_client.dataset(run.default_dataset_id).iterate_items()
+    return [slim_ad(ad) for ad in ads]
