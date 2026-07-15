@@ -100,3 +100,49 @@ def get_competitor_data(keyword, country="US", limit=5) -> dict[str, str]:
     )
     ads = the_apify_client.dataset(run.default_dataset_id).iterate_items()
     return [slim_ad(ad) for ad in ads]
+
+def get_playbook(ads: list[dict], context: dict) -> str:
+    prompt = (
+        "Write a Meta Ads playbook using the competitor ad data below. "
+        "Ignore any ads unrelated to the business's industry — they're keyword-match noise.\n"
+        "Use exactly these sections in this order:\n"
+        "1. Executive summary of competitor landscape\n"
+        "2. Table of competitor data\n"
+        "3. Dominant copy/hook patterns used\n"
+        "4. Common offers\n"
+        "5. Common media formats\n"
+        "6. Gaps/ads that have potential which aren't being used\n"
+        "7. Recommended ways to make ads that can be tested out\n\n"
+        f"Business context:\n{context}\n\n"
+        f"Competitor ad data:\n{ads}"
+    )
+    response = client.messages.create(
+        model="claude-opus-4-8",
+        max_tokens=4000,
+        messages=[{"role": "user", "content": prompt}]
+    )
+    for block in response.content:
+        if block.type == "text":
+            return block.text
+    return ""
+
+TEST_CONTEXT = {
+    "business_overview": "Private math tutoring in Los Angeles for high school students...",
+    "usp": "Friendliness and patience...",
+    "competitors": "Mathnasium, Kumon, Sylvan Learning",
+    "campaign_objective": "Lead generation — free intro session",
+    "target_audience": "Parents of high schoolers in LA, $100k+ household income",
+    "audience_pain_points": "Kid falling behind in algebra/geometry, losing confidence",
+    "products_promoted": "1:1 high school math tutoring, SAT/ACT math prep",
+    "offers_promotions": "First session free",
+    "admired_competitor_ads": "Mathnasium's free assessment ads",
+    "monthly_budget": "500",
+}
+
+context = TEST_CONTEXT
+keywords = get_keywords(context)
+data = list()
+for i in range(5):
+    data.extend(get_competitor_data(keywords[i]))
+print({ad["advertiser"] for ad in data})
+print(get_playbook(data, context))
