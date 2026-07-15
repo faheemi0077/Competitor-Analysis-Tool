@@ -75,11 +75,22 @@ def slim_ad(ad):
     snap = ad.get("snapshot", {})
     body = snap.get("body") or {}
     copy = body.get("text")
-    if not copy and snap.get("cards"):
-        copy = snap["cards"][0].get("body")
+    title = snap.get("title")
+    cards = snap.get("cards")
+
+    def clean(val):
+        return val if val and "{{" not in val else None
+
+    if cards:
+        card = cards[0]
+        if not clean(copy):
+            copy = clean(card.get("body"))
+        if not clean(title):
+            title = clean(card.get("title"))
+
     return {
         "advertiser": snap.get("pageName"),
-        "title": snap.get("title"),
+        "title": title,
         "copy": copy,
         "cta": snap.get("ctaText"),
         "format": snap.get("displayFormat"),
@@ -139,10 +150,14 @@ TEST_CONTEXT = {
     "monthly_budget": "500",
 }
 
-context = TEST_CONTEXT
-keywords = get_keywords(context)
-data = list()
-for i in range(5):
-    data.extend(get_competitor_data(keywords[i]))
-print({ad["advertiser"] for ad in data})
-print(get_playbook(data, context))
+def test():
+    context = TEST_CONTEXT
+    keywords = get_keywords(context)
+    data = list()
+    for i in range(5):
+        data.extend(get_competitor_data(keywords[i]))
+    print({ad["advertiser"] for ad in data})
+    print(get_playbook(data, context))
+
+if __name__ == "__main__":
+    test()
