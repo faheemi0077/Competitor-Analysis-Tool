@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 client = anthropic.Anthropic()
+#apify_client alias for standard measure
 the_apify_client = apify_client = ApifyClient(os.environ["APIFY_TOKEN"])
 
 
