@@ -107,15 +107,17 @@ def get_competitor_data(keyword, country="US", limit=5) -> dict[str, str]:
     run = the_apify_client.actor("apify/facebook-ads-scraper").call(
         run_input={"startUrls": [{"url": url}]},
         max_items=limit,
+        #limited to 10 cents per request
         max_total_charge_usd=0.10,
     )
+    #method provided by apify
     ads = the_apify_client.dataset(run.default_dataset_id).iterate_items()
     return [slim_ad(ad) for ad in ads]
 
 def get_playbook(ads: list[dict], context: dict) -> str:
     prompt = (
         "Write a Meta Ads playbook using the competitor ad data below. "
-        "Ignore any ads unrelated to the business's industry — they're keyword-match noise.\n"
+        "Ignore any ads unrelated to the business's industry - they're keyword-match noise.\n"
         "Use exactly these sections in this order:\n"
         "1. Executive summary of competitor landscape\n"
         "2. Table of competitor data\n"
@@ -156,6 +158,7 @@ def test():
     data = list()
     for i in range(5):
         data.extend(get_competitor_data(keywords[i]))
+    #prints the distinct advertisers shown in results (set comprehension)
     print({ad["advertiser"] for ad in data})
     print(get_playbook(data, context))
 
