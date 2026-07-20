@@ -4,6 +4,7 @@ from urllib.parse import quote
 from apify_client import ApifyClient
 import os
 from dotenv import load_dotenv
+import re
 
 
 
@@ -115,30 +116,39 @@ def get_competitor_data(keyword, country="US", limit=5) -> dict[str, str]:
     ads = the_apify_client.dataset(run.default_dataset_id).iterate_items()
     return [slim_ad(ad) for ad in ads]
 
-def get_playbook(ads: list[dict], context: dict) -> str:
+def get_playbook(ads: list[dict], context: dict) -> dict:
+    #claude now returns valid json to be used by PlayBook Report
     prompt = (
-        "Write a Meta Ads playbook using the competitor ad data below. "
-        "Ignore any ads unrelated to the business's industry - they're keyword-match noise.\n"
-        "Use exactly these sections in this order:\n"
-        "1. Executive summary of competitor landscape\n"
-        "2. Table of competitor data\n"
-        "3. Dominant copy/hook patterns used\n"
-        "4. Common offers\n"
-        "5. Common media formats\n"
-        "6. Gaps/ads that have potential which aren't being used\n"
-        "7. Recommended ways to make ads that can be tested out\n\n"
+        "Build a Meta Ads playbook from the competitor ad data below. "
+        "Ignore ads unrelated to the business's industry - they're keyword-match noise.\n"
+        "Return ONLY valid JSON (no markdown, no prose) matching exactly this shape:\n"
+        "{\n"
+        '  "title": str, "subtitle": str,\n'
+        '  "context": {"industry": str, "location": str, "budget": str, "offer": str, "adsScanned": str},\n'
+        '  "tiers": [{"tier": str, "name": str, "body": str, "examples": str}],\n'
+        '  "takeaways": [str], "excluded": str,\n'
+        '  "competitors": [{"advertiser": str, "angle": str, "format": str, "offer": str, "since": str, "dot": str}],\n'
+        '  "hooks": [{"title": str, "body": str}],\n'
+        '  "offers": [{"label": str, "count": str}], "offerNote": str,\n'
+        '  "formats": [{"label": str, "dot": str, "body": str}],\n'
+        '  "gaps": [{"title": str, "body": str, "tag": str}],\n'
+        '  "ads": [{"letter": str, "name": str, "format": str, "badge": str, "hook": str, "body": str, "offer": str}],\n'
+        '  "singleCta": str, "budgetNotes": [str], "footer": str\n'
+        "}\n\n"
         f"Business context:\n{context}\n\n"
         f"Competitor ad data:\n{ads}"
     )
     response = client.messages.create(
         model="claude-opus-4-8",
-        max_tokens=4000,
+        max_tokens=16000,
         messages=[{"role": "user", "content": prompt}]
     )
     for block in response.content:
         if block.type == "text":
-            return block.text
-    return ""
+            #reformatting of text
+            text = re.sub(r"^```(?:json)?|```$", "", block.text.strip()).strip()
+            return json.loads(text)
+    return {}
 
 TEST_CONTEXT = {
     "business_overview": "Private math tutoring in Los Angeles for high school students...",
@@ -153,15 +163,13 @@ TEST_CONTEXT = {
     "monthly_budget": "500",
 }
 
-def test():
-    context = TEST_CONTEXT
+def run(context: dict = TEST_CONTEXT):
     keywords = get_keywords(context)
     data = list()
-    for i in range(5):
+    for i in range(min(5, len(keywords))):
         data.extend(get_competitor_data(keywords[i]))
-    #prints the distinct advertisers shown in results (set comprehension)
-    print({ad["advertiser"] for ad in data})
-    print(get_playbook(data, context))
+    playbook = get_playbook(data, context)
+    return playbook
 
 if __name__ == "__main__":
-    test()
+    run()

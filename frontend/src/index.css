@@ -1,0 +1,268 @@
+:root {
+  --text: #6b6375;
+  --text-h: #08060d;
+  --bg: #fff;
+  --border: #e5e4e7;
+  --code-bg: #f4f3ec;
+  --accent: #aa3bff;
+  --accent-bg: rgba(170, 59, 255, 0.1);
+  --accent-border: rgba(170, 59, 255, 0.5);
+  --social-bg: rgba(244, 243, 236, 0.5);
+  --shadow:
+    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+
+  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
+  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
+  --mono: ui-monospace, Consolas, monospace;
+
+  font: 18px/145% var(--sans);
+  letter-spacing: 0.18px;
+  color-scheme: light dark;
+  color: var(--text);
+  background: var(--bg);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  @media (max-width: 1024px) {
+    font-size: 16px;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --text: #9ca3af;
+    --text-h: #f3f4f6;
+    --bg: #16171d;
+    --border: #2e303a;
+    --code-bg: #1f2028;
+    --accent: #c084fc;
+    --accent-bg: rgba(192, 132, 252, 0.15);
+    --accent-border: rgba(192, 132, 252, 0.5);
+    --social-bg: rgba(47, 48, 58, 0.5);
+    --shadow:
+      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
+  }
+
+  #social .button-icon {
+    filter: invert(1) brightness(2);
+  }
+}
+
+body {
+  margin: 0;
+}
+
+#root {
+  width: 1126px;
+  max-width: 100%;
+  margin: 0 auto;
+  text-align: center;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+h1,
+h2 {
+  font-family: var(--heading);
+  font-weight: 500;
+  color: var(--text-h);
+}
+
+h1 {
+  font-size: 56px;
+  letter-spacing: -1.68px;
+  margin: 32px 0;
+  @media (max-width: 1024px) {
+    font-size: 36px;
+    margin: 20px 0;
+  }
+}
+h2 {
+  font-size: 24px;
+  line-height: 118%;
+  letter-spacing: -0.24px;
+  margin: 0 0 8px;
+  @media (max-width: 1024px) {
+    font-size: 20px;
+  }
+}
+p {
+  margin: 0;
+}
+
+code,
+.counter {
+  font-family: var(--mono);
+  display: inline-flex;
+  border-radius: 4px;
+  color: var(--text-h);
+}
+
+code {
+  font-size: 15px;
+  line-height: 135%;
+  padding: 4px 8px;
+  background: var(--code-bg);
+}
+
+.answer-input {
+  width: 600px;
+  height: 40px;
+  font-size: 16px;
+  margin-top: 20px;
+}
+
+.form-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+.form-container label {
+  display: block;
+}
+
+/* ==========================================================================
+   Meta Ads Playbook — Market Research Form
+   Facebook-themed styles for a React form built from:
+
+     <label>
+       1. Can you provide a brief overview…?
+       <br />
+       <input type="text" name="question1" className="answer-input" />
+     </label>
+
+   Wrap all your <label> questions in a container with class "questions"
+   (e.g. <form className="questions"> … </form>) for the card layout + spacing.
+   ========================================================================== */
+
+:root {
+  --fb-blue:        #1877f2;
+  --fb-blue-hover:  #166fe5;
+  --fb-blue-active: #1461cf;
+  --fb-blue-tint:   #e7f0fe;
+  --fb-canvas:      #f0f2f5;
+  --fb-card:        #ffffff;
+  --fb-border:      #dadde1;
+  --fb-input-bg:    #f7f8fa;
+  --fb-input-border:#ccd0d5;
+  --fb-text:        #050505;
+  --fb-text-soft:   #65676b;
+  --fb-placeholder: #8a8d91;
+}
+
+/* ---- Page ---------------------------------------------------------------- */
+body {
+  margin: 0;
+  background: var(--fb-canvas);
+  color: var(--fb-text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Optional wrapper around all the questions */
+.questions {
+  max-width: 680px;
+  margin: 24px auto;
+  padding: 0 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ---- Each question (the <label>) ---------------------------------------- */
+label {
+  display: block;
+  background: var(--fb-card);
+  border: 1px solid var(--fb-border);
+  border-radius: 12px;
+  padding: 20px 22px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--fb-text);
+}
+
+/* The <br /> after the question text creates the gap before the input;
+   this margin gives it consistent breathing room. */
+label br {
+  content: "";
+  display: block;
+  margin-bottom: 12px;
+}
+
+/* ---- The answer field --------------------------------------------------- */
+.answer-input {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid var(--fb-input-border);
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--fb-text);
+  background: var(--fb-input-bg);
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+}
+
+.answer-input::placeholder {
+  color: var(--fb-placeholder);
+}
+
+.answer-input:hover {
+  border-color: #b7bcc4;
+}
+
+.answer-input:focus {
+  border-color: var(--fb-blue);
+  background: var(--fb-card);
+  box-shadow: 0 0 0 3px rgba(24, 119, 242, 0.15);
+}
+
+/* Use this instead of <input type="text"> for longer answers */
+textarea.answer-input {
+  resize: vertical;
+  min-height: 84px;
+}
+
+/* ---- Submit button (optional) ------------------------------------------ */
+.submit-btn {
+  width: 100%;
+  border: none;
+  border-radius: 8px;
+  background: var(--fb-blue);
+  color: #fff;
+  font-family: inherit;
+  font-size: 17px;
+  font-weight: 700;
+  padding: 14px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.submit-btn:hover  { background: var(--fb-blue-hover); }
+.submit-btn:active { background: var(--fb-blue-active); }
+.submit-btn:disabled { opacity: 0.7; cursor: default; }
+
+.submit-btn {
+  width: 100%;
+  border: none;
+  border-radius: 12px;
+  background: var(--fb-blue);
+  color: #fff;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  padding: 28px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
