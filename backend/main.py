@@ -6,8 +6,14 @@ import utils
 
 app = FastAPI()
 
-origins = os.environ.get("ALLOWED_ORIGINS", "http://localhost:5173").split(",")
-app.add_middleware(CORSMiddleware, allow_origins=origins, allow_methods=["*"], allow_headers=["*"])
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],
+    allow_origin_regex=r"https://competitor-analysis-tool.*\.vercel\.app",
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 class Context(BaseModel):
