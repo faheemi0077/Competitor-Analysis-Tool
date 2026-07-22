@@ -1,6 +1,7 @@
 import {useState} from "react";
 import PlaybookReport from "./PlaybookReport.jsx"
 
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
 function Form() {
     const [playbook, setPlaybook] = useState(null);
@@ -8,7 +9,7 @@ function Form() {
     const handleSubmit = async (e) => {
     e.preventDefault();
     const payload = Object.fromEntries(new FormData(e.target));
-    const res = await fetch("http://localhost:8000/playbook", {
+    const res = await fetch(`${API_URL}/playbook`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
